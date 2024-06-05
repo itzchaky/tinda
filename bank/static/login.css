@@ -1,0 +1,71 @@
+video {
+  position: fixed;
+  top: 50%;
+  overflow: hidden;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+  transform: translate(-50%, -50%) scale(1.2); /* Adjust the scale value to zoom in */
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 500px;
+  height: 400px;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 10px;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 
+              0 4px 6px rgba(0, 0, 0, 0.1); /* Main shadow */
+
+  position: rel;
+}
+
+input {
+  background-color: transparent;
+  font-size: 36px;
+  text-align: center;
+  margin: 10px;
+  padding: 10px;
+  width: 300px;
+  border-color: rgba(255, 255, 255, 0.314);
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  color: white;
+}
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.314);
+}
+
+button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.314);
+  cursor: pointer;
+  font-size: 16px; /* Adjust the font size as needed */
+  padding: 0;
+  outline: none;
+  transition: color 0.3s ease;
+  position: absolute; /* Position the button absolutely */
+  bottom: 20px; /* Position it at the bottom of the container */
+}
+
+button:hover {
+  color: white;
+}
