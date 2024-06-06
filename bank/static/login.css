@@ -14,9 +14,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  margin: 0;
   font-family: Arial, sans-serif;
+  padding:50px;
 }
 
 .login-container {
@@ -25,7 +24,8 @@ body {
   align-items: center;
   justify-content: center;
   width: 500px;
-  height: 400px;
+  padding-top:70px;
+  padding-bottom:70px;
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   border-radius: 10px;
@@ -33,6 +33,26 @@ body {
               0 4px 6px rgba(0, 0, 0, 0.1); /* Main shadow */
 
   position: rel;
+}
+
+.margin-apply {
+  margin-top: 20px; /* Example margin */
+  margin-bottom: 20px;
+}
+
+textarea {
+  background-color: transparent;
+  font-size: 20px;
+  text-align: center;
+  margin: 10px;
+  padding: 10px;
+  width: 300px;
+  border-color: rgba(255, 255, 255, 0.314);
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  color: white;
+  height:150px;
 }
 
 input {
@@ -53,7 +73,12 @@ input::placeholder {
   color: rgba(255, 255, 255, 0.314);
 }
 
-button {
+textarea::placeholder {
+  color: rgba(255, 255, 255, 0.314);
+  font-size: 36px;
+}
+
+button, .button {
   background: none;
   border: none;
   color: rgba(255, 255, 255, 0.314);
@@ -62,10 +87,9 @@ button {
   padding: 0;
   outline: none;
   transition: color 0.3s ease;
-  position: absolute; /* Position the button absolutely */
   bottom: 20px; /* Position it at the bottom of the container */
 }
 
-button:hover {
+button:hover, .button:hover {
   color: white;
 }

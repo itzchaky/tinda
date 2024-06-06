@@ -9,8 +9,9 @@
     <link rel="stylesheet" type="text/css" href="../static/login.css">
     <div class="login-container">
         <input type="text" placeholder="Username" id="username">
-        <input type="password" placeholder="Password" id="password">
-        <button type="button" >Sign up</button>
+        <input type="password" placeholder="Password" id="password"> <br/>
+        <button type="button" >Sign up</button> <br />
+        <button class="button" type="button" onclick="location.href='{{url_for('Login.register')}}';">Register</button>
     </div>
 </body>
 {% endblock %}

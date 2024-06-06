@@ -1,22 +1,46 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint
 from bank import app, conn, bcrypt
-from bank.forms import CustomerLoginForm, EmployeeLoginForm, DirectCustomerLoginForm
+from bank.forms import CustomerLoginForm, EmployeeLoginForm, DirectCustomerLoginForm, RegisterUser
 from flask_login import login_user, current_user, logout_user, login_required
 from bank.models import select_Employee
 from bank.models import Customers, select_Customer, select_customer_direct
 from bank.models import select_cus_accounts, select_customers_direct
+from bank.models import Transfers, CheckingAccount, InvestmentAccount,  transfer_account, insert_user
 from bank import roles, mysession
+
 
 Login = Blueprint('Login', __name__)
 
-
 @Login.route("/")
-def isLoggedIn():
+def login():
     if current_user.is_authenticated:
         return render_template('home.html')
     return render_template('login.html')
-        
-        
+
+@Login.route("/logout")
+def logout():
+    #202212
+    mysession["state"]="logout"
+    print(mysession)
+
+    logout_user()
+    return redirect(url_for('Login.login'))
+
+@Login.route("/register")
+def register():
+    form = RegisterUser()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        email=form.email.data
+        name=form.name.data
+        description=form.description
+        date=form.date
+        location=form.location
+        password=hashed_password
+        insert_user(email, name, description, password, date, location)
+        flash('Account has been created! The customer is now able to log in', 'success')
+        return redirect(url_for('Login.login'))
+    return render_template('register.html', title='Register user', form=form)
 
 # @Login.route("/")
 # @Login.route("/home")
@@ -152,15 +176,6 @@ def isLoggedIn():
 #     return render_template('login.html', title='Login', is_employee=is_employee, form=form
 #     , role=role
 #     )
-
-# @Login.route("/logout")
-# def logout():
-#     #202212
-#     mysession["state"]="logout"
-#     print(mysession)
-
-#     logout_user()
-#     return redirect(url_for('Login.home'))
 
 
 # @Login.route("/account")

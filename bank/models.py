@@ -3,6 +3,7 @@ from datetime import datetime
 from bank import conn, login_manager
 from flask_login import UserMixin
 from psycopg2 import sql
+from flask import render_template, url_for, flash, redirect, request, Blueprint
 
 
 @login_manager.user_loader
@@ -33,6 +34,18 @@ def load_user(user_id):
         return None
 
 
+def insert_user(email, name, description, password, dateBirth, location):
+    cur = conn.cursor()
+    sql = """
+    INSERT INTO Users(name, email, password)
+    VALUES (%s, %s, %s, %s, %s, %s)
+    """
+    cur.execute(sql, (email, name, description, password, dateBirth, location))
+    # Husk commit() for INSERT og UPDATE, men ikke til SELECT!
+    conn.commit()
+    cur.close()
+
+# OLD SHIT HERFRA
 
 class Customers(tuple, UserMixin):
     def __init__(self, user_data):

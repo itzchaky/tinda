@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+{% block content %}
+<script>
+    function adjustMargin() {
+        const square = document.getElementById('square');
+        const windowHeight = window.innerHeight;
+            alert(square.offsetHeight);
+
+        // Check if the square's height is greater than or equal to the window's height
+        if (square.offsetHeight >= windowHeight) {
+            alert(1);
+            square.classList.add('margin-apply');
+        } else {
+            alert(2);
+            square.classList.remove('margin-apply');
+            alert(2)
+        }
+    }
+
+    // Run on initial load
+    adjustMargin();
+
+    // Run on window resize
+    window.onresize = adjustMargin;
+</script>
+<title>Login Page</title>
+<video autoplay muted loop id="myVideo">
+    <source src="static/images/background.mp4" type="video/mp4">
+</video>
+
+<body>
+    <link rel="stylesheet" type="text/css" href="../static/login.css">
+    <form method="POST" action="">
+        <div class="login-container" id="square">
+            {{ form.hidden_tag() }}
+        {% if form.name.errors %}
+            {{ form.name(class="form-control form-control-lg is-invalid", placeholder="name") }}
+            <div class="invalid-feedback">
+                {% for error in form.name.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            {{ form.name(class="form-control form-control-lg", placeholder="Name") }}
+        {% endif %}
+        
+        {% if form.password.errors %}
+            {{ form.password(class="form-control form-control-lg is-invalid", placeholder="Password") }}
+            <div class="invalid-feedback">
+                {% for error in form.password.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            {{ form.password(class="form-control form-control-lg", placeholder="Password") }}
+        {% endif %}
+        
+        {% if form.email.errors %}
+            {{ form.email(class="form-control form-control-lg is-invalid", placeholder="Email") }}
+            <div class="invalid-feedback">
+                {% for error in form.email.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            {{ form.email(class="form-control form-control-lg", placeholder="Email") }}
+        {% endif %}
+        
+        {% if form.date.errors %}
+            {{ form.date(class="form-control form-control-lg is-invalid", placeholder="YYYY-MM-DD") }}
+            <div class="invalid-feedback">
+                {% for error in form.date.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            {{ form.date(class="form-control form-control-lg", placeholder="YYYY-MM-DD") }}
+        {% endif %}
+        
+        {% if form.description.errors %}
+            {{ form.description(class="form-control form-control-lg is-invalid", placeholder="Bio") }}
+            <div class="invalid-feedback">
+                {% for error in form.date.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            {{ form.description(class="form-control form-control-lg", placeholder="Bio") }}
+        {% endif %} 
+            {{ form.submit(class="button") }}
+        </div>
+    </form>
+</body>
+{% endblock %}
