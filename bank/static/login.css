@@ -69,10 +69,6 @@ input {
   color: white;
 }
 
-input::placeholder {
-  color: rgba(255, 255, 255, 0.314);
-}
-
 textarea::placeholder {
   color: rgba(255, 255, 255, 0.314);
   font-size: 36px;
@@ -92,4 +88,26 @@ button, .button {
 
 button:hover, .button:hover {
   color: white;
+}
+
+.message-box {
+  position: fixed;
+  top: 20px;  /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;  /* Adjust based on your content */
+  background-color: rgba(255, 255, 255, 0.5); /* White with 50% opacity */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 1000; /* Ensure it's above other content */
+  text-align: center;
+}
+
+.close-btn {
+  float: right;
+  font-size: 24px;
+  line-height: 20px;
+  cursor: pointer;
 }

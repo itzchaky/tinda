@@ -4,6 +4,8 @@ from bank import conn, login_manager
 from flask_login import UserMixin
 from psycopg2 import sql
 from flask import render_template, url_for, flash, redirect, request, Blueprint
+from flask_bcrypt import Bcrypt
+
 
 
 @login_manager.user_loader
@@ -33,17 +35,46 @@ def load_user(user_id):
     else:
         return None
 
+def email_exists(email):
+    cur = conn.cursor()
+    cur.execute("SELECT 1 FROM Users WHERE email = %s", (email,))
+    exists = cur.fetchone()
+    cur.close()
+    return exists is not None
 
 def insert_user(email, name, description, password, dateBirth, location):
     cur = conn.cursor()
     sql = """
-    INSERT INTO Users(name, email, password)
+    INSERT INTO Users(email, name, description, password, dateBirth, location)
     VALUES (%s, %s, %s, %s, %s, %s)
     """
     cur.execute(sql, (email, name, description, password, dateBirth, location))
     # Husk commit() for INSERT og UPDATE, men ikke til SELECT!
     conn.commit()
     cur.close()
+
+def check_user(email,password):
+    cur = conn.cursor()
+    cur.execute("SELECT password FROM Users WHERE email = %s", (email,))
+    result = cur.fetchone()
+    cur.close()
+    bcrypt = Bcrypt()
+
+    if result is not None:
+        stored_password_hash = result[0]  # Fetch the stored hash from the database
+        return bcrypt.check_password_hash(stored_password_hash, password)
+    else:
+        return False  # Return False if no user is found
+
+class Users(tuple, UserMixin):
+    def __init__(self, user_data):
+        self.name = user_data[0]
+        self.password = user_data[4]
+        self.role = "user"
+
+    def get_id(self):
+       return (self.CPR_number)
+       
 
 # OLD SHIT HERFRA
 

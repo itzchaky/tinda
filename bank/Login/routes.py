@@ -1,21 +1,31 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint
 from bank import app, conn, bcrypt
-from bank.forms import CustomerLoginForm, EmployeeLoginForm, DirectCustomerLoginForm, RegisterUser
+from bank.forms import CustomerLoginForm, EmployeeLoginForm, DirectCustomerLoginForm, RegisterUser, LoginForm
 from flask_login import login_user, current_user, logout_user, login_required
 from bank.models import select_Employee
 from bank.models import Customers, select_Customer, select_customer_direct
-from bank.models import select_cus_accounts, select_customers_direct
-from bank.models import Transfers, CheckingAccount, InvestmentAccount,  transfer_account, insert_user
+from bank.models import select_cus_accounts, select_customers_direct, insert_user, email_exists
+from bank.models import Transfers, CheckingAccount, InvestmentAccount,  transfer_account, check_user
 from bank import roles, mysession
-
 
 Login = Blueprint('Login', __name__)
 
-@Login.route("/")
+@Login.route("/", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return render_template('home.html')
-    return render_template('login.html')
+
+    form = LoginForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+        # Check if the email already exists
+        if not check_user(email,password):
+            flash('Login failed. Please check your credentials and try again.', 'error')
+        else:
+            flash('You are logged in.', 'success')
+            return redirect(url_for('Login.login'))
+    return render_template('login.html', title='Login', form=form)
 
 @Login.route("/logout")
 def logout():
@@ -26,19 +36,25 @@ def logout():
     logout_user()
     return redirect(url_for('Login.login'))
 
-@Login.route("/register")
+@Login.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegisterUser()
     if form.validate_on_submit():
+        email = form.email.data
+        # Check if the email already exists
+        if email_exists(email):
+            flash('An account with this email already exists.', 'error')
+            return render_template('register.html', title='Register User', form=form)
+        
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         email=form.email.data
         name=form.name.data
-        description=form.description
-        date=form.date
-        location=form.location
+        description=form.description.data
+        date=form.date.data
+        location=form.location.data
         password=hashed_password
         insert_user(email, name, description, password, date, location)
-        flash('Account has been created! The customer is now able to log in', 'success')
+        flash('Account has been created! You are now able to log in', 'success')
         return redirect(url_for('Login.login'))
     return render_template('register.html', title='Register user', form=form)
 

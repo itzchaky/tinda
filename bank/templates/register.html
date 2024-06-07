@@ -87,7 +87,23 @@
         {% else %}
             {{ form.description(class="form-control form-control-lg", placeholder="Bio") }}
         {% endif %} 
+
+        
+        
+        {% if form.location.errors %}
+            {{ form.location(class="form-control form-control-lg is-invalid", placeholder="Country") }}
+            <div class="invalid-feedback">
+                {% for error in form.date.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            {{ form.location(class="form-control form-control-lg", placeholder="Country") }}
+        {% endif %} 
             {{ form.submit(class="button") }}
+            <a href="{{ url_for('Login.login') }}">
+                <button class="button" type="button">Login with existing account</button>
+            </a>
         </div>
     </form>
 </body>

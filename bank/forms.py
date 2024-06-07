@@ -3,6 +3,13 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, Integ
 from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
 
 
+class LoginForm(FlaskForm):
+    email = StringField('Email',
+                        validators=[DataRequired()])
+    password = PasswordField('Password',
+                        validators=[DataRequired()])
+    submit = SubmitField('Sign in')
+
 class RegisterUser(FlaskForm):
     name = StringField('Name',
                         validators=[DataRequired(), Length(min=2, max=20)])
@@ -14,9 +21,11 @@ class RegisterUser(FlaskForm):
                         validators=[DataRequired()])
     date = DateField('Date of birth',
                         validators=[DataRequired()])
-    location = IntegerField('What city do you live in',
+    location = StringField('Country',
                         validators=[DataRequired()])
-    submit = SubmitField('Add')
+    submit = SubmitField('Register')
+
+
 
 class AddCustomerForm(FlaskForm):
     username = StringField('Username',

@@ -16,12 +16,43 @@
     {% else %}
         <title>UIS Prototype</title>
     {% endif %}
+    <script>
+        // Function to close the message box
+        function closeMessageBox() {
+            document.getElementById('messageBox').style.display = 'none';
+        }
 
+        // Function to handle document click
+        document.addEventListener('click', function(event) {
+            var isClickInside = document.getElementById('messageBox').contains(event.target);
+
+            if (!isClickInside) {
+                closeMessageBox();
+            }
+        });
+
+        // Prevent clicks inside the message box from closing it
+        document.getElementById('messageBox').addEventListener('click', function(event) {
+            event.stopPropagation(); // This prevents the click from propagating to the document
+        });
+
+    </script>
     <link rel="stylesheet" type="text/css" href="../static/layout.css">
 </head>
 <body>
     <main role="main" class="container">
-    {% block content %}{% endblock %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div id="messageBox" class="message-box">
+                <span class="close-btn" onclick="closeMessageBox()">&times;</span>
+                <p>{{ message }}</p>
+            </div>
+            <!-- <div class="alert alert-{{ category }}">{{ message }}</div> -->
+          {% endfor %}
+        {% endif %}
+      
+    {% block content %}{% endblock %}  {% endwith %}
     </main>
 
 
