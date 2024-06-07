@@ -1,0 +1,26 @@
+{% extends "mainlayout.html" %}
+{% block content %}
+<h1>User Profile</h1>
+<div><strong>Email:</strong> {{ user.email }}</div>
+<div><strong>Name:</strong> {{ user.name }}</div>
+<div><strong>Birthday:</strong> {{ user.birth }}</div>
+<div><strong>Country:</strong> {{ user.location }}</div>
+<div><strong>Description:</strong> {{ user.description }}</div>
+
+<br />
+<hr />
+My photos:
+{% for picture in pictures %}
+<img src="uploads/{{ picture[0] }}" alt="User Picture" width="250px">
+<a href="deletepicture/{{ picture[0] }}">
+    <button class="button" type="button">Delete picture</button></a><br />
+{% endfor %}
+Upload photo
+<form action="{{ url_for('Main.upload_file') }}" method="post" enctype="multipart/form-data">
+    <input type="file" name="file">
+    <input type="submit" value="Upload">
+</form>
+
+<a href="{{ url_for('Login.deleteuser') }}">
+    <button class="button" type="button">Delete user</button></a>
+{% endblock %}

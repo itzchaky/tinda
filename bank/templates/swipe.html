@@ -1,0 +1,24 @@
+{% extends "mainlayout.html" %}
+{% block content %}
+{% if match %}
+<h1>You like dis?</h1>
+<div>
+    <a href="like/{{ match.id  }}">
+    <button class="like_button" type="button">Like</button></a> |
+    <a href="dislike/{{ match.id  }}">
+    <button class="dislike_button" type="button">Dislike</button></a>
+</div>
+<br/>
+<div><strong>Name:</strong> {{ match.name }}</div>
+<div><strong>Age:</strong> {{ age }}</div>
+<div><strong>Country:</strong> {{ match.location }}</div>
+<div><strong>Description:</strong> {{ match.description }}</div>
+
+{% for picture in pictures %}
+<img src="uploads/{{ picture[0] }}" alt="User Picture" width="250px">
+
+{% endfor %}
+{% else %}
+You have swiped them all!
+{% endif %}
+{% endblock %}

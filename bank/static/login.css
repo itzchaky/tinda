@@ -72,7 +72,7 @@ textarea {
   height:150px;
 }
 
-input {
+input, select {
   background-color: transparent;
   font-size: 36px;
   text-align: center;
@@ -84,6 +84,12 @@ input {
   border-left: 0px;
   border-right: 0px;
   color: white;
+}
+
+
+select option {
+  background-color: white; /* Ensures a dark background for options */
+  color: black; /* Maintains white text for options */
 }
 
 textarea::placeholder {

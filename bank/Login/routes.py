@@ -4,7 +4,7 @@ from bank.forms import CustomerLoginForm, EmployeeLoginForm, DirectCustomerLogin
 from flask_login import login_user, current_user, logout_user, login_required
 from bank.models import select_Employee
 from bank.models import Customers, select_Customer, select_customer_direct
-from bank.models import select_cus_accounts, select_customers_direct, insert_user, email_exists
+from bank.models import select_cus_accounts, select_customers_direct, insert_user, email_exists, delete_user_by_email
 from bank.models import Transfers, CheckingAccount, InvestmentAccount,  transfer_account, check_user, load_user
 from bank import roles, mysession
 
@@ -12,7 +12,7 @@ Login = Blueprint('Login', __name__)
 
 @Login.route("/", methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:
+    if current_user.is_authenticated and mysession["email"] != "":
         return render_template('home.html')
     form = LoginForm()
     if form.validate_on_submit():
@@ -35,14 +35,13 @@ def login():
 @Login.route("/logout")
 def logout():
     mysession["state"]="logout"
-    print(mysession)
-
     logout_user()
     return redirect(url_for('Login.login'))
 
 @Login.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegisterUser()
+    form.location.choices = [(country, country) for country in get_countries_list()]
     if form.validate_on_submit():
         email = form.email.data
         # Check if the email already exists
@@ -61,6 +60,20 @@ def register():
         flash('Account has been created! You are now able to log in', 'success')
         return redirect(url_for('Login.login'))
     return render_template('register.html', title='Register user', form=form)
+
+def get_countries_list():
+    # Normally, you might load this list from a database or another source
+    return ["Afghanistan","Albania","Algeria","Andorra","Angola","Anguilla","Antigua & Barbuda","Argentina","Armenia","Aruba","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bermuda","Bhutan","Bolivia","Bosnia & Herzegovina","Botswana","Brazil","British Virgin Islands","Brunei","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Cape Verde","Cayman Islands","Chad","Chile","China","Colombia","Congo","Cook Islands","Costa Rica","Cote D Ivoire","Croatia","Cruise Ship","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Estonia","Ethiopia","Falkland Islands","Faroe Islands","Fiji","Finland","France","French Polynesia","French West Indies","Gabon","Gambia","Georgia","Germany","Ghana","Gibraltar","Greece","Greenland","Grenada","Guam","Guatemala","Guernsey","Guinea","Guinea Bissau","Guyana","Haiti","Honduras","Hong Kong","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Isle of Man","Israel","Italy","Jamaica","Japan","Jersey","Jordan","Kazakhstan","Kenya","Kuwait","Kyrgyz Republic","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Macau","Macedonia","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Mauritania","Mauritius","Mexico","Moldova","Monaco","Mongolia","Montenegro","Montserrat","Morocco","Mozambique","Namibia","Nepal","Netherlands","Netherlands Antilles","New Caledonia","New Zealand","Nicaragua","Niger","Nigeria","Norway","Oman","Pakistan","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Puerto Rico","Qatar","Reunion","Romania","Russia","Rwanda","Saint Pierre & Miquelon","Samoa","San Marino","Satellite","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","South Africa","South Korea","Spain","Sri Lanka","St Kitts & Nevis","St Lucia","St Vincent","St. Lucia","Sudan","Suriname","Swaziland","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor L'Este","Togo","Tonga","Trinidad & Tobago","Tunisia","Turkey","Turkmenistan","Turks & Caicos","Uganda","Ukraine","United Arab Emirates","United Kingdom","Uruguay","Uzbekistan","Venezuela","Vietnam","Virgin Islands (US)","Yemen","Zambia","Zimbabwe"]
+
+
+@Login.route("/deleteuser")
+def deleteuser():
+    if current_user.is_authenticated:
+        delete_user_by_email(mysession["email"])
+        mysession["state"]="logout"
+        logout_user()
+        flash('The user is deleted', 'success')
+    return redirect(url_for('Login.login'))
 
 # @Login.route("/")
 # @Login.route("/home")
@@ -211,3 +224,4 @@ def register():
 #     return render_template('account.html', title='Account'
 #     , acc=accounts, role=role
 #     )
+

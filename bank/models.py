@@ -5,6 +5,7 @@ from flask_login import UserMixin
 from psycopg2 import sql
 from flask import render_template, url_for, flash, redirect, request, Blueprint
 from flask_bcrypt import Bcrypt
+from datetime import datetime
 
 
 
@@ -35,6 +36,18 @@ def insert_user(email, name, description, password, dateBirth, location):
     conn.commit()
     cur.close()
 
+def delete_user_by_email(email):
+    cur = conn.cursor()
+    # Execute DELETE statement to remove the row where the email matches
+    cur.execute("DELETE FROM Users WHERE email = %s", (email,))
+    # Commit the changes to the database to ensure the deletion is saved
+    conn.commit()
+    # Check how many rows were affected (optional)
+    affected_rows = cur.rowcount
+    cur.close()
+    # Return True if any rows were deleted, else False
+    return affected_rows > 0
+
 def check_user(email,password):
     cur = conn.cursor()
     cur.execute("SELECT password FROM Users WHERE email = %s", (email,))
@@ -60,7 +73,133 @@ class Users(tuple, UserMixin):
 
     def get_id(self):
        return (self.email)
-       
+
+
+def insert_picture(url, userid):
+    cur = conn.cursor()
+    sql = """
+    INSERT INTO pictures(filename, userid)
+    VALUES (%s, %s)
+    """
+    cur.execute(sql, (url, userid))
+    # Husk commit() for INSERT og UPDATE, men ikke til SELECT!
+    conn.commit()
+    cur.close()
+
+def select_pictures(userid):
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM pictures WHERE userid = %s", (userid,))
+    result = cur.fetchall()
+    cur.close()
+    print(result)
+    return result
+
+def delete_picture(filepath):
+    cur = conn.cursor()
+    # Execute DELETE statement to remove the row where the email matches
+    cur.execute("DELETE FROM pictures WHERE filename = %s", (filepath,))
+    # Commit the changes to the database to ensure the deletion is saved
+    conn.commit()
+    # Check how many rows were affected (optional)
+    affected_rows = cur.rowcount
+    cur.close()
+    # Return True if any rows were deleted, else False
+    return affected_rows > 0
+
+
+def select_swipe(userid):
+    cur = conn.cursor()
+    sql = """
+    SELECT *
+    FROM users u
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM matches m
+        WHERE m.matchee = u.userid AND m.matcher = %s ) AND
+        NOT EXISTS (
+        SELECT 1
+        FROM matches m
+        WHERE m.matcher = u.userid AND m.matchee = %s AND active = TRUE) AND
+        NOT EXISTS (
+        SELECT 1
+        FROM matches m
+        WHERE m.matcher = u.userid AND m.matchee = %s AND dislike = TRUE)
+    AND u.userid != %s
+    """
+    cur.execute(sql, (userid,userid,userid,userid))
+    user = Users(cur.fetchone()) if cur.rowcount > 0 else None;
+    cur.close()
+    return user
+
+
+def select_match(userid):
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM pictures WHERE userid = %s", (userid,))
+    result = cur.fetchall()
+    cur.close()
+    print(result)
+    return result
+
+def update_or_insert_match(userid, id):
+    # Create a cursor object using the database connection
+    cur = conn.cursor()
+    
+
+    # First, try to update if the specific match exists
+    update_sql = """
+    UPDATE matches
+    SET active = TRUE
+    WHERE matcher = %s AND matchee = %s;
+    """
+    cur.execute(update_sql, (id, userid))
+    
+    
+    # Check if the update has affected any rows
+    if cur.rowcount == 0:
+        # No rows updated, meaning no such match exists
+        # Perform the insert with reversed values
+        insert_sql = """
+        INSERT INTO matches (matchdate, active, dislike, matcher, matchee)
+        VALUES (NOW(), FALSE, FALSE, %s, %s)
+        """
+        cur.execute(insert_sql, (userid, id))
+    
+    # Commit changes
+    conn.commit()
+    cur.close()
+
+def dislike_match(userid, id):
+    # Create a cursor object using the database connection
+    cur = conn.cursor()
+    
+
+    # First, try to update if the specific match exists
+    update_sql = """
+    UPDATE matches
+    SET dislike = TRUE
+    WHERE matcher = %s AND matchee = %s;
+    """
+    cur.execute(update_sql, (userid, id))
+    # Check if the update has affected any rows
+    if cur.rowcount == 0:
+        update_sql = """
+        UPDATE matches
+        SET dislike = TRUE
+        WHERE matcher = %s AND matchee = %s;
+        """
+        cur.execute(update_sql, (id, userid))
+        if cur.rowcount == 0:
+            # No rows updated, meaning no such match exists
+            # Perform the insert with reversed values
+            insert_sql = """
+            INSERT INTO matches (matchdate, active, dislike, matcher, matchee)
+            VALUES (NOW(), FALSE, TRUE, %s, %s)
+            """
+            cur.execute(insert_sql, (userid, id))
+
+    # Commit changes
+    conn.commit()
+    cur.close()
 
 # OLD SHIT HERFRA
 

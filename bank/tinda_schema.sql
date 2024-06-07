@@ -1,3 +1,4 @@
+
 CREATE TABLE IF NOT EXISTS Users(
   userid int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
@@ -18,8 +19,9 @@ CREATE TABLE IF NOT EXISTS matches(
   matchid int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   matchDate DATE,
   active boolean,
-  matcher int REFERENCES Users(userid),
-  matchee int REFERENCES Users(userid)
+  dislike boolean,
+  matcher int REFERENCES Users(userid) ON DELETE CASCADE,
+  matchee int REFERENCES Users(userid) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS chats(

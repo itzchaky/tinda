@@ -21,8 +21,8 @@ class RegisterUser(FlaskForm):
                         validators=[DataRequired()])
     date = DateField('Date of birth',
                         validators=[DataRequired()])
-    location = StringField('Country',
-                        validators=[DataRequired()])
+    location = SelectField('Country',
+                        choices=[], validators=[DataRequired()])
     submit = SubmitField('Register')
 
 

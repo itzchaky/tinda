@@ -1,11 +1,15 @@
-from flask import render_template, url_for, flash, redirect, request, Blueprint
+from flask import render_template, url_for, flash, redirect, request, Blueprint, send_from_directory
 from bank import app, conn, bcrypt
 from bank.forms import DepositForm, InvestForm
 from bank.forms import TransferForm
 from flask_login import current_user
-from bank.models import CheckingAccount, InvestmentAccount, update_CheckingAccount
+from bank.models import CheckingAccount, InvestmentAccount, update_CheckingAccount, delete_picture, select_swipe, update_or_insert_match, dislike_match
 from bank.models import select_cus_investments_with_certificates, select_cus_investments, select_cus_investments_certificates_sum
-from bank.models import select_cus_accounts,  transfer_account
+from bank.models import select_cus_accounts,  transfer_account, load_user, insert_picture, select_pictures
+from flask import Flask, request, render_template, redirect, url_for
+from werkzeug.utils import secure_filename
+import os
+import random
 
 
 import sys, datetime
@@ -21,10 +25,13 @@ Main = Blueprint('Main', __name__)
 
 @Main.route("/settings")
 def settings():
-    if not current_user.is_authenticated:
+    if not current_user.is_authenticated or mysession["id"] == 0:
         flash('Please Login.','danger')
         return redirect(url_for('Login.login'))
-    return render_template('home.html', title='settings')
+    user = load_user(mysession["email"])
+    pictures = select_pictures(mysession["id"])
+    print(pictures)
+    return render_template('myprofile.html', title='settings', user=user, pictures=pictures)
 
 
 @Main.route("/messages")
@@ -40,8 +47,75 @@ def swipe():
     if not current_user.is_authenticated:
         flash('Please Login.','danger')
         return redirect(url_for('Login.login'))
-    return render_template('home.html', title='settings')
+    match = select_swipe(mysession["id"])
+    if match:
+        pictures = select_pictures(match.id)
+        age = calculate_age(str(match.birth))
+    else:
+        age = ""
+        pictures = ""
+    print(pictures)
+    return render_template('swipe.html', title='settings', match=match, pictures=pictures, age = age)
 
+
+@Main.route('/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return redirect(url_for('Main.settings'))
+    file = request.files['file']
+    if file.filename == '':
+        return redirect(url_for('Main.settings'))
+    if file:
+        random_number = random.randint(1000, 9999)
+        _, file_extension = os.path.splitext(secure_filename(file.filename))
+        filename = str(mysession["id"]) + "-" + str(random_number) + file_extension
+        filepath = os.path.join(os.path.join(app.root_path, 'uploads'), filename)
+        file.save(filepath)
+        insert_picture(filename,mysession["id"])
+        flash('File Uploaded Successfully.','Succes')
+        return redirect(url_for('Main.settings'))
+
+
+@app.route('/deletepicture/<filename>')
+def deletepicture(filename):
+    delete_picture(filename)
+    return redirect(url_for('Main.settings'))
+
+UPLOAD_FOLDER = 'uploads'
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
+
+def calculate_age(birthdate, reference_date=None):
+    # Parse the birthdate string into a datetime object
+    birthdate = datetime.datetime.strptime(birthdate, "%Y-%m-%d")
+    
+    # Use today's date as the reference if no reference date is given
+    if reference_date is None:
+        reference_date = datetime.datetime.today()
+    else:
+        reference_date = datetime.datetime.strptime(reference_date, "%Y-%m-%d")
+    
+    # Calculate the difference between the reference date and the birthdate
+    age = reference_date.year - birthdate.year
+    
+    # Adjust the age if the reference day has not yet occurred in the current year
+    if (reference_date.month, reference_date.day) < (birthdate.month, birthdate.day):
+        age -= 1
+    
+    return age
+
+
+@app.route('/like/<id>')
+def match(id):
+    update_or_insert_match(mysession["id"],id)
+    return redirect(url_for('Main.swipe'))
+
+@app.route('/dislike/<id>')
+def match_dislike(id):
+    dislike_match(mysession["id"],id)
+    return redirect(url_for('Main.swipe'))
 
 
 # @Customer.route("/invest", methods=['GET', 'POST'])
