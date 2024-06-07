@@ -9,29 +9,11 @@ from flask_bcrypt import Bcrypt
 
 
 @login_manager.user_loader
-def load_user(user_id):
+def load_user(email):
     cur = conn.cursor()
-
-    schema = 'customers'
-    id = 'cpr_number'
-    if str(user_id).startswith('60'):
-        schema = 'employees'
-        id = 'id'
-
-    user_sql = sql.SQL("""
-    SELECT * FROM {}
-    WHERE {} = %s
-    """).format(sql.Identifier(schema),  sql.Identifier(id))
-
-    cur.execute(user_sql, (int(user_id),))
+    cur.execute("SELECT * FROM Users WHERE email = %s", (email,))
     if cur.rowcount > 0:
-        # return-if svarer til nedenstående:
-    		# if schema == 'employees':
-    		#   return Employees(cur.fetchone())
-    		# else:
-    		#   return Customers(cur.fetchone())
-
-        return Employees(cur.fetchone()) if schema == 'employees' else Customers(cur.fetchone())
+        return Users(cur.fetchone())
     else:
         return None
 
@@ -68,12 +50,16 @@ def check_user(email,password):
 
 class Users(tuple, UserMixin):
     def __init__(self, user_data):
-        self.name = user_data[0]
+        self.id = user_data[0]
+        self.email = user_data[1]
+        self.name = user_data[2]
+        self.description = user_data[3]
         self.password = user_data[4]
-        self.role = "user"
+        self.birth = user_data[5]
+        self.location = user_data[6]
 
     def get_id(self):
-       return (self.CPR_number)
+       return (self.email)
        
 
 # OLD SHIT HERFRA

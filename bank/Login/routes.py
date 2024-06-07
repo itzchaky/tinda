@@ -5,7 +5,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from bank.models import select_Employee
 from bank.models import Customers, select_Customer, select_customer_direct
 from bank.models import select_cus_accounts, select_customers_direct, insert_user, email_exists
-from bank.models import Transfers, CheckingAccount, InvestmentAccount,  transfer_account, check_user
+from bank.models import Transfers, CheckingAccount, InvestmentAccount,  transfer_account, check_user, load_user
 from bank import roles, mysession
 
 Login = Blueprint('Login', __name__)
@@ -14,7 +14,6 @@ Login = Blueprint('Login', __name__)
 def login():
     if current_user.is_authenticated:
         return render_template('home.html')
-
     form = LoginForm()
     if form.validate_on_submit():
         email = form.email.data
@@ -23,13 +22,18 @@ def login():
         if not check_user(email,password):
             flash('Login failed. Please check your credentials and try again.', 'error')
         else:
-            flash('You are logged in.', 'success')
-            return redirect(url_for('Login.login'))
+            user = load_user(email)
+            login_user(user)
+            mysession["id"] = user.id
+            mysession["email"] = user.email
+            mysession["name"] = user.name
+            print(mysession["name"])
+            flash('You are now logged in.', 'success')
+            return render_template('home.html')
     return render_template('login.html', title='Login', form=form)
 
 @Login.route("/logout")
 def logout():
-    #202212
     mysession["state"]="logout"
     print(mysession)
 

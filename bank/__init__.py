@@ -36,12 +36,12 @@ login_manager.login_message_category = 'info'
 
 roles = ["ingen","employee","customer"]
 print(roles)
-mysession = {"state" : "initializing","role" : "Not assingned", "id": 0 ,"age" : 202212}
+mysession = {"id": 0, "name": "", "email": "", "description": "", "location": "", "birth" : ""}
 print(mysession)
 
 from bank.Login.routes import Login
-from bank.Customer.routes import Customer
+from bank.Main.routes import Main
 from bank.Employee.routes import Employee
 app.register_blueprint(Login)
-app.register_blueprint(Customer)
+app.register_blueprint(Main)
 app.register_blueprint(Employee)
