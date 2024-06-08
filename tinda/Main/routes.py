@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint, send_from_directory
 from tinda import app, conn, bcrypt
 from flask_login import current_user
-from tinda.models import delete_picture, select_swipe, update_or_insert_match, dislike_match
+from tinda.models import delete_picture, load_chats, select_swipe, update_or_insert_match, dislike_match, load_messages
 from tinda.models import  load_user, insert_picture, select_pictures
 from flask import Flask, request, render_template, redirect, url_for
 from werkzeug.utils import secure_filename
@@ -36,7 +36,10 @@ def messages():
     if not current_user.is_authenticated:
         flash('Please Login.','danger')
         return redirect(url_for('Login.login'))
-    return render_template('home.html', title='settings')
+    
+    user = load_user(mysession["email"])
+    chats = load_chats(mysession["id"])
+    return render_template('messages.html', chats=chats, user=user)
 
 
 @Main.route("/swipe")

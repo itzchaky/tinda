@@ -60,7 +60,7 @@ def check_user(email,password):
         return bcrypt.check_password_hash(stored_password_hash, password)
     else:
         return False  # Return False if no user is found
-
+    
 class Users(tuple, UserMixin):
     def __init__(self, user_data):
         self.id = user_data[0]
@@ -74,6 +74,39 @@ class Users(tuple, UserMixin):
     def get_id(self):
        return (self.email)
 
+# list of most recent chat between user and people
+def load_chats(userid):
+    cur = conn.cursor()
+    sql = """WITH RankedChats AS (
+            SELECT 
+                message, senderid, recipientid, timestamp,
+                ROW_NUMBER() OVER (PARTITION BY LEAST(senderid, recipientid), GREATEST(senderid, recipientid) ORDER BY timestamp DESC) AS rn
+            FROM chats
+            WHERE senderid = %s OR recipientid = %s
+            )
+            select matcher, matchee, active, rc.message, u.name from matches
+            LEFT JOIN RankedChats rc
+            ON (rc.senderid = matcher AND matchee = %s)
+            OR (rc.recipientid = matcher AND matchee = %s)
+            OR (rc.senderid = matchee AND matcher = %s)
+            OR (rc.recipientid = matchee AND matcher = %s)
+            JOIN users u
+            ON (u.userid = matcher AND matchee = %s)
+            OR (u.userid = matchee AND matcher = %s)
+            WHERE (matcher = %s or matchee = %s) AND (rn = 1 OR rn IS NULL) AND active = true"""
+    cur.execute(sql, (userid, userid, userid, userid, userid, userid,userid, userid, userid, userid))
+    result = cur.fetchall()
+    cur.close()
+    return result
+
+# list of messages between 2 people
+def load_messages(userid):
+    cur = conn.cursor()
+    cur.execute("SELECT message FROM chats WHERE senderid = %s or recipientid = %s ORDER BY timestamp", (userid,))
+    result = cur.fetchall()
+    cur.close()
+    
+    return result
 
 def insert_picture(url, userid):
     cur = conn.cursor()
