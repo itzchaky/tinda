@@ -3,27 +3,34 @@
 <!-- <video autoplay muted loop id="myVideo">
   <source src="static/images/background.mp4" type="video/mp4">
 </video> -->
+
 <body>
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='messages.css') }}">
+  <script type="text/javascript">
+    function goToChat(personUserMatchedWith) {
+      window.location.href = "/chat/" + personUserMatchedWith;
+    }
+  </script>
   <div id="chat-container">
-      {% for chat in chats %}
-          <div class="chat-message">
-              <div class="profile-pic">
-                  <img src="{{ url_for('static', filename='images/placeholder.jpg') }}" alt="Profile Picture">
-              </div>
-              <div class="chat-info">
-                <!-- show name -->
-                  <div class="match-name">{{ chat[4] }}</div>
-            
-                <!-- show msg -->
-                {% if chat[3] %}
-                  <div class="chat-text">{{ chat[3] }}</div>
-                  {% else %}
-                  <div class="chat-text"></div>
-                  {% endif %}
-              </div>
-          </div>
-      {% endfor %}
+    {% for chat in chats %}
+                                            <!-- IGNORER DETTE ERROR, DET ER IKKE ET ERROR -->
+    <div class="chat-message" onclick="goToChat({{ chat[0] if chat[0] != userid else chat[1] }})">
+      <div class="profile-pic">
+        <img src="{{ url_for('static', filename='images/placeholder.jpg') }}" alt="Profile Picture">
+      </div>
+      <div class="chat-info">
+        <!-- show name -->
+        <div class="match-name">{{ chat[4] }}</div>
+
+        <!-- show msg -->
+        {% if chat[3] %}
+        <div class="chat-text">{{ chat[3] }}</div>
+        {% else %}
+        <div class="chat-text"></div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
   </div>
-  </body>
+</body>
 {% endblock %}

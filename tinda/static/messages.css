@@ -19,6 +19,13 @@ body {
   align-items: center;
   padding: 10px;
   border-bottom: 1px solid #eee;
+  cursor: pointer;  /* Add cursor pointer to indicate clickable */
+  transition: background-color 0.3s, border-radius 0.3s; /* Smooth transition for hover effect */
+}
+
+.chat-message:hover {
+  background-color: #f0f0f0; /* Optional: add a hover effect */
+  border-radius: 10px; /* Add rounded edges on hover */
 }
 
 .chat-message:last-child {
