@@ -10,12 +10,6 @@
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}"> -->
-
-    {% if title %}
-        <title>UIS Prototype - {{ title }}</title>
-    {% else %}
-        <title>UIS Prototype</title>
-    {% endif %}
     <script>
         // Function to close the message box
         function closeMessageBox() {
@@ -37,7 +31,7 @@
         });
 
     </script>
-    <link rel="stylesheet" type="text/css" href="../static/layout.css">
+    <!-- <link rel="stylesheet" type="text/css" href="../static/layout.css"> -->
 </head>
 <body>
     <video autoplay muted loop id="myVideo">
@@ -66,8 +60,8 @@
             <!-- <div class="alert alert-{{ category }}">{{ message }}</div> -->
           {% endfor %}
         {% endif %}
-      
-    {% block content %}{% endblock %}  {% endwith %}
+        {% endwith %}
+    {% block content %}{% endblock %} 
     
     <a href="{{ url_for('Login.logout') }}">
         <button class="button" type="button">Logout</button></a>

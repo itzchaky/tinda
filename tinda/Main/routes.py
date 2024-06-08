@@ -38,7 +38,7 @@ def messages():
         flash('Please Login.','danger')
         return redirect(url_for('Login.login'))
     
-    user = load_user(mysession["email"])
+    user = mysession["id"]
     chats = load_chats(mysession["id"])
     return render_template('messages.html', chats=chats, user=user)
 
@@ -70,21 +70,32 @@ def upload_file():
         random_number = random.randint(1000, 9999)
         _, file_extension = os.path.splitext(secure_filename(file.filename))
         filename = str(mysession["id"]) + "-" + str(random_number) + file_extension
-        filepath = os.path.join(os.path.join(app.root_path, UPLOAD_FOLDER), filename)
+        filepath = os.path.join(os.path.join(Main.root_path, UPLOAD_FOLDER), filename)
         file.save(filepath)
         insert_picture(filename,mysession["id"])
         flash('File Uploaded Successfully.','Succes')
         return redirect(url_for('Main.settings'))
 
 
-@app.route('/deletepicture/<filename>')
+@Main.route('/deletepicture/<filename>')
 def deletepicture(filename):
     delete_picture(filename)
     return redirect(url_for('Main.settings'))
 
-@app.route('/uploads/<filename>')
+@Main.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
+
+@Main.route('/chat/<matchedId>')
+def chat(matchedId):
+    user = mysession['id']
+    messages = load_messages(user, matchedId)
+    return render_template('chat.html', messages=messages)
+
+@Main.route('/goto_chat/<personUserMatchedWith>')
+def goto_chat(personUserMatchedWith):
+    return redirect(url_for('Main.chat', matchedId=personUserMatchedWith))
+    
 
 def calculate_age(birthdate, reference_date=None):
     # Parse the birthdate string into a datetime object
@@ -106,12 +117,12 @@ def calculate_age(birthdate, reference_date=None):
     return age
 
 
-@app.route('/like/<id>')
+@Main.route('/like/<id>')
 def match(id):
     update_or_insert_match(mysession["id"],id)
     return redirect(url_for('Main.swipe'))
 
-@app.route('/dislike/<id>')
+@Main.route('/dislike/<id>')
 def match_dislike(id):
     dislike_match(mysession["id"],id)
     return redirect(url_for('Main.swipe'))

@@ -101,9 +101,16 @@ def load_chats(userid):
     return result
 
 # list of messages between 2 people
-def load_messages(userid):
+def load_messages(userid, recipientid):
     cur = conn.cursor()
-    cur.execute("SELECT message FROM chats WHERE senderid = %s or recipientid = %s ORDER BY timestamp", (userid,))
+    cur.execute("""select c.message, c.senderid, c.recipientid, u.name senderName, d.name recipName 
+                from chats c
+                join users u
+                on (u.userid = c.senderid)
+                join users d
+                on (d.userid = c.recipientid)
+                where (c.senderid = %s and c.recipientid = %s) or (c.recipientid = %s and c.senderid = %s)
+                order by timestamp desc""", (userid,recipientid,userid,recipientid,))
     result = cur.fetchall()
     cur.close()
     
