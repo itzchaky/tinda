@@ -1,11 +1,8 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint, send_from_directory
-from bank import app, conn, bcrypt
-from bank.forms import DepositForm, InvestForm
-from bank.forms import TransferForm
+from tinda import app, conn, bcrypt
 from flask_login import current_user
-from bank.models import CheckingAccount, InvestmentAccount, update_CheckingAccount, delete_picture, select_swipe, update_or_insert_match, dislike_match
-from bank.models import select_cus_investments_with_certificates, select_cus_investments, select_cus_investments_certificates_sum
-from bank.models import select_cus_accounts,  transfer_account, load_user, insert_picture, select_pictures
+from tinda.models import delete_picture, select_swipe, update_or_insert_match, dislike_match
+from tinda.models import  load_user, insert_picture, select_pictures
 from flask import Flask, request, render_template, redirect, url_for
 from werkzeug.utils import secure_filename
 import os
@@ -16,7 +13,7 @@ import sys, datetime
 
 #202212
 # roles is defined in the init-file
-from bank import roles, mysession
+from tinda import roles, mysession
 
 
 

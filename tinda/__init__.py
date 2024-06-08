@@ -19,7 +19,7 @@ conn = psycopg2.connect(db)
 # create cursor object
 cur = conn.cursor()
 
-cur.execute(open("bank/tinda_schema.sql", "r").read())
+cur.execute(open("tinda/tinda_schema.sql", "r").read())
 
 conn.commit()
 
@@ -39,9 +39,7 @@ print(roles)
 mysession = {"id": 0, "name": "", "email": "", "description": "", "location": "", "birth" : ""}
 print(mysession)
 
-from bank.Login.routes import Login
-from bank.Main.routes import Main
-from bank.Employee.routes import Employee
+from tinda.Login.routes import Login
+from tinda.Main.routes import Main
 app.register_blueprint(Login)
 app.register_blueprint(Main)
-app.register_blueprint(Employee)

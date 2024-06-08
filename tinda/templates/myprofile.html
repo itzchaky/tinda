@@ -11,7 +11,7 @@
 <hr />
 My photos:
 {% for picture in pictures %}
-<img src="uploads/{{ picture[0] }}" alt="User Picture" width="250px">
+<img src="static/uploads/{{ picture[0] }}" alt="User Picture" width="250px">
 <a href="deletepicture/{{ picture[0] }}">
     <button class="button" type="button">Delete picture</button></a><br />
 {% endfor %}

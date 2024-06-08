@@ -8,7 +8,6 @@ import sys, datetime
 
 #202212
 from bank import roles, mysession
-from bank.models_e import select_emp_investments_with_certificates, select_emp_investments, select_emp_investments_certificates_sum
 
 
 iEmployee = 1

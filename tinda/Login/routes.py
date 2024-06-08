@@ -1,12 +1,10 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint
-from bank import app, conn, bcrypt
-from bank.forms import CustomerLoginForm, EmployeeLoginForm, DirectCustomerLoginForm, RegisterUser, LoginForm
+from tinda import app, conn, bcrypt
+from tinda.forms import RegisterUser, LoginForm
 from flask_login import login_user, current_user, logout_user, login_required
-from bank.models import select_Employee
-from bank.models import Customers, select_Customer, select_customer_direct
-from bank.models import select_cus_accounts, select_customers_direct, insert_user, email_exists, delete_user_by_email
-from bank.models import Transfers, CheckingAccount, InvestmentAccount,  transfer_account, check_user, load_user
-from bank import roles, mysession
+from tinda.models import insert_user, email_exists, delete_user_by_email
+from tinda.models import check_user, load_user
+from tinda import mysession
 
 Login = Blueprint('Login', __name__)
 
