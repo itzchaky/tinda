@@ -1,11 +1,12 @@
 # write all your SQL queries in this file.
 from datetime import datetime
-from tinda import conn, login_manager
+from tinda import conn, login_manager, app
 from flask_login import UserMixin
 from psycopg2 import sql
 from flask import render_template, url_for, flash, redirect, request, Blueprint
 from flask_bcrypt import Bcrypt
 from datetime import datetime
+import os
 
 
 
@@ -95,6 +96,15 @@ def select_pictures(userid):
     return result
 
 def delete_picture(filepath):
+    # delete file
+    
+    UPLOAD_FOLDER = 'static/uploads'
+
+    print(os.path.join(os.path.join(app.root_path, UPLOAD_FOLDER), filepath))
+    if os.path.exists(os.path.join(os.path.join(app.root_path, UPLOAD_FOLDER), filepath)):
+        os.remove(os.path.join(os.path.join(app.root_path, UPLOAD_FOLDER), filepath))
+
+    # now delete in DB
     cur = conn.cursor()
     # Execute DELETE statement to remove the row where the email matches
     cur.execute("DELETE FROM pictures WHERE filename = %s", (filepath,))

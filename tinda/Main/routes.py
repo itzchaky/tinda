@@ -15,6 +15,7 @@ import sys, datetime
 # roles is defined in the init-file
 from tinda import roles, mysession
 
+UPLOAD_FOLDER = 'static/uploads'
 
 
 Main = Blueprint('Main', __name__)
@@ -66,7 +67,7 @@ def upload_file():
         random_number = random.randint(1000, 9999)
         _, file_extension = os.path.splitext(secure_filename(file.filename))
         filename = str(mysession["id"]) + "-" + str(random_number) + file_extension
-        filepath = os.path.join(os.path.join(app.root_path, 'uploads'), filename)
+        filepath = os.path.join(os.path.join(app.root_path, UPLOAD_FOLDER), filename)
         file.save(filepath)
         insert_picture(filename,mysession["id"])
         flash('File Uploaded Successfully.','Succes')
@@ -77,8 +78,6 @@ def upload_file():
 def deletepicture(filename):
     delete_picture(filename)
     return redirect(url_for('Main.settings'))
-
-UPLOAD_FOLDER = 'uploads'
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
