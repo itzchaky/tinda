@@ -13,7 +13,7 @@ app.config['SECRET_KEY'] = 'fc089b9218301ad987914c53481bff04'
 
 # set your own database
 #db = "dbname='bank' user='postgres' host='127.0.0.1' password = 'UIS'"
-db = "dbname='mvq' user='mvq' host='127.0.0.1' password = 'immvplol100'"
+db = "dbname='itzchaky' user='itzchaky' host='127.0.0.1' password = '2730Herlev'"
 conn = psycopg2.connect(db)
 
 # create cursor object

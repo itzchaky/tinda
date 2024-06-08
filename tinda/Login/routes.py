@@ -2,7 +2,7 @@ from flask import render_template, url_for, flash, redirect, request, Blueprint
 from tinda import app, conn, bcrypt
 from tinda.forms import RegisterUser, LoginForm
 from flask_login import login_user, current_user, logout_user, login_required
-from tinda.models import insert_user, email_exists, delete_user_by_email
+from tinda.models import insert_user, email_exists, delete_user_by_email, delete_picture, select_pictures
 from tinda.models import check_user, load_user
 from tinda import mysession
 
@@ -67,6 +67,11 @@ def get_countries_list():
 @Login.route("/deleteuser")
 def deleteuser():
     if current_user.is_authenticated:
+        pictures = select_pictures(mysession["id"])
+        print(pictures)
+        for x in pictures:
+            print(x[0])
+            delete_picture(x[0])
         delete_user_by_email(mysession["email"])
         mysession["state"]="logout"
         logout_user()
