@@ -3,18 +3,22 @@
 
 <body>
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='chat.css') }}">
-    <div id="chat-container">
-        {% for chat in messages %}
-            <div class="chat-info">
-                <div class="profile-pic">
-                    <img src="{{ url_for('static', filename='images/placeholder.jpg') }}" alt="Profile Picture">
-                </div>
-                <div>
-                    <div class="match-name">{{ chat[3] }}</div>
-                    <div class="chat-text">{{ chat[0] }}</div>
-                </div>
-            </div>
-        {% endfor %}
+  <div id="chat-container">
+    {% for chat in messages %}
+    <div class="chat-info">
+      <div class="profile-pic">
+        <img src="{{ url_for('static', filename='images/placeholder.jpg') }}" alt="Profile Picture">
+      </div>
+      <div>
+        <div class="match-name">{{ chat[3] }}</div>
+        <div class="chat-text">{{ chat[0] }}</div>
+      </div>
     </div>
-  </body>
+    {% endfor %}
+    <form action="{{ url_for('Main.send_message', matchedId=matchedId) }}" method="post">
+      <textarea name="message" placeholder="Type your message"></textarea>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+</body>
 {% endblock %}

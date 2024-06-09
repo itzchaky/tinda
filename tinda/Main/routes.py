@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint, send_from_directory
 from tinda import app, conn, bcrypt
 from flask_login import current_user
-from tinda.models import delete_picture, load_chats, select_swipe, update_or_insert_match, dislike_match, load_messages
+from tinda.models import delete_picture, load_chats, select_swipe, update_or_insert_match, dislike_match, load_messages, save_message
 from tinda.models import  load_user, insert_picture, select_pictures
 from flask import Flask, request, render_template, redirect, url_for
 from werkzeug.utils import secure_filename
@@ -90,12 +90,18 @@ def uploaded_file(filename):
 def chat(matchedId):
     user = mysession['id']
     messages = load_messages(user, matchedId)
-    return render_template('chat.html', messages=messages)
+    return render_template('chat.html', messages=messages, matchedId=matchedId)
 
 @Main.route('/goto_chat/<personUserMatchedWith>')
 def goto_chat(personUserMatchedWith):
     return redirect(url_for('Main.chat', matchedId=personUserMatchedWith))
     
+@Main.route('/send_message/<matchedId>', methods=['POST'])
+def send_message(matchedId):
+    user = mysession['id']
+    message = request.form['message']
+    save_message(user, matchedId, message)
+    return redirect(url_for('Main.chat', matchedId=matchedId))
 
 def calculate_age(birthdate, reference_date=None):
     # Parse the birthdate string into a datetime object

@@ -6,6 +6,10 @@ body {
   overflow: hidden;
 }
 
+.button, button {
+  color: #E91E63;
+}
+
 #myVideo {
   position: fixed;
   top: 0;
@@ -72,6 +76,10 @@ body {
   display: block;
   width: 0;
   z-index: 1;
+}
+
+textarea {
+  background: #E91E63;
 }
 
 .chat-info:nth-child(odd) .chat-text {
