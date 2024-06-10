@@ -116,6 +116,12 @@ def load_messages(userid, recipientid):
     
     return result
 
+def save_message(user, matchedId, message):
+    cur = conn.cursor()
+    cur.execute("insert into chats values (DEFAULT, %s, current_timestamp, %s, %s)", (message, user, matchedId,))
+    conn.commit()
+    cur.close()
+
 def insert_picture(url, userid):
     cur = conn.cursor()
     sql = """
