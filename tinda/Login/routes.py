@@ -5,6 +5,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from tinda.models import insert_user, email_exists, delete_user_by_email, delete_picture, select_pictures
 from tinda.models import check_user, load_user
 from tinda import mysession
+import re
 
 Login = Blueprint('Login', __name__)
 
@@ -42,6 +43,11 @@ def register():
     form.location.choices = [(country, country) for country in get_countries_list()]
     if form.validate_on_submit():
         email = form.email.data
+        email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        if not re.match(email_regex, email):
+            flash('Invalid email format.', 'error')
+            return render_template('register.html', title='Register User', form=form)
+
         # Check if the email already exists
         if email_exists(email):
             flash('An account with this email already exists.', 'error')
